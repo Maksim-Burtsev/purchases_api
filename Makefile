@@ -3,3 +3,6 @@ run:
 
 req:
 	pip freeze > requirements.txt
+
+test:
+	cd ./api && uvicorn main:app --reload
