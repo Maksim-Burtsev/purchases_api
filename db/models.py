@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date
 
-from database import Base
+from db.database import Base
 
 
 class Purchase(Base):
@@ -10,6 +10,7 @@ class Purchase(Base):
     name = Column(String)
     price = Column(Integer)
     date = Column(Date)
+    test = Column(String)
 
     def __repr__(self) -> str:
         return self.name

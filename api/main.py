@@ -1,10 +1,15 @@
+import sys
+
+sys.path.append("..")
+
 from fastapi import FastAPI, Depends
 
 from sqlalchemy.orm import Session
 
-from schemas import Item
-from database import engine, SessionLocal
-from models import Base, Purchase
+from shemas.item import Item
+
+from db.database import engine, SessionLocal
+from db.models import Base, Purchase
 
 Base.metadata.create_all(bind=engine)
 
