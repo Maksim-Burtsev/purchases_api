@@ -57,21 +57,17 @@ def get_purchases_with_total(db: Session, date_start: date | None,
     """
     Возвращает список состоящий из имени покупки общей суммы (которая на неё потрачена) и сколько раз она была сделана
     """
+    query = db.query(Purchase.name,
+                     func.sum(Purchase.price).label('total'),
+                     func.count(Purchase.name).label('count'))
 
     if date_start and date_end:
-        query = \
-            db.query(Purchase.name,  func.sum(Purchase.price).label('total'), func.count(Purchase.name).label('count')) \
-            .filter(Purchase.date >= date_start, Purchase.date <= date_end) \
-            .group_by(Purchase.name) \
-            .order_by(sqlalchemy.desc('total'))[:limit]
+        query = query.filter(Purchase.date >= date_start,
+                             Purchase.date <= date_end)
 
-    else:
-        query = \
-            db.query(Purchase.name,  func.sum(Purchase.price).label('total'), func.count(Purchase.name).label('count')) \
-            .group_by(Purchase.name) \
-            .order_by(sqlalchemy.desc('total'))[:limit]
+    query = query.group_by(Purchase.name)\
+                 .order_by(sqlalchemy.desc('total'))[:limit]
 
     result = [ItemDict(name=item.name, total=item.total,
                        count=item.count) for item in query]
-
     return result

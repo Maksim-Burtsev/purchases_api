@@ -44,6 +44,6 @@ def get_purchases(date_start: date | None = Query(None),
                     limit: int | None = Query(None, gt=0), 
                     db: Session = Depends(get_db)):
     """Получение списка покупок"""
-    
+    #TODO добавить возможность сортировать
     purchases_list = get_purchases_with_total(db, date_start, date_end, limit)
     return purchases_list
