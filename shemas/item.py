@@ -11,3 +11,4 @@ class Item(BaseModel):
 class ItemTotalOutput(BaseModel):
     name: str
     total: int
+    count: int

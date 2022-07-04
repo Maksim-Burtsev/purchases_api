@@ -3,7 +3,7 @@ from datetime import date
 
 sys.path.append("..")
 
-from fastapi import FastAPI, Depends, Body
+from fastapi import FastAPI, Depends, Query
 
 from sqlalchemy.orm import Session
 
@@ -38,11 +38,12 @@ def delete_purchase(name: str, db: Session = Depends(get_db)):
     remove_purchase(name.title(), db)
     return None
 
-@app.post('/get_purchases', response_model=list[ItemTotalOutput | None])
-def get_purchases(date_start: date | None = Body(None), 
-                    date_end: date | None = Body(None), 
+@app.get('/get_purchases', response_model=list[ItemTotalOutput | None])
+def get_purchases(date_start: date | None = Query(None), 
+                    date_end: date | None = Query(None),
+                    limit: int | None = Query(None, gt=0), 
                     db: Session = Depends(get_db)):
     """Получение списка покупок"""
     
-    purchases_list = get_purchases_with_total(db, date_start, date_end)
+    purchases_list = get_purchases_with_total(db, date_start, date_end, limit)
     return purchases_list

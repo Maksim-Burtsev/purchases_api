@@ -14,6 +14,7 @@ from shemas.item import Item
 class ItemDict(TypedDict):
     name: str
     total: int
+    count: int
 
 
 def get_db():
@@ -52,24 +53,25 @@ def remove_purchase(name: str, db: Session):
 
 
 def get_purchases_with_total(db: Session, date_start: date | None,
-                             date_end: date | None) -> list[ItemDict]:
+                             date_end: date | None, limit: int | None) -> list[ItemDict]:
     """
-    Возвращает список состоящий из имени покупки и общей суммы, потраченной на неё
+    Возвращает список состоящий из имени покупки общей суммы (которая на неё потрачена) и сколько раз она была сделана
     """
 
     if date_start and date_end:
         query = \
-            db.query(Purchase.name,  func.sum(Purchase.price).label('total')) \
+            db.query(Purchase.name,  func.sum(Purchase.price).label('total'), func.count(Purchase.name).label('count')) \
             .filter(Purchase.date >= date_start, Purchase.date <= date_end) \
             .group_by(Purchase.name) \
-            .order_by(sqlalchemy.desc('total'))
+            .order_by(sqlalchemy.desc('total'))[:limit]
 
     else:
         query = \
-            db.query(Purchase.name,  func.sum(Purchase.price).label('total')) \
+            db.query(Purchase.name,  func.sum(Purchase.price).label('total'), func.count(Purchase.name).label('count')) \
             .group_by(Purchase.name) \
-            .order_by(sqlalchemy.desc('total'))
+            .order_by(sqlalchemy.desc('total'))[:limit]
 
-    result = [ItemDict(name=item.name, total=item.total) for item in query]
+    result = [ItemDict(name=item.name, total=item.total,
+                       count=item.count) for item in query]
 
     return result
