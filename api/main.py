@@ -1,18 +1,21 @@
 import sys
 from datetime import date
 
-import sqlalchemy
 sys.path.append("..")
 
 from fastapi import FastAPI, Depends, Body
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
-from db.models import Base, Purchase
+from db.models import Base
 from db.database import engine
 from shemas.item import Item, ItemTotalOutput
-from api.services import get_db, add_new_purchase, remove_purchase
+from api.services import (
+    get_db,
+    add_new_purchase,
+    remove_purchase,
+    get_purchases_with_total,
+)
 
 
 Base.metadata.create_all(bind=engine)
@@ -39,14 +42,7 @@ def delete_purchase(name: str, db: Session = Depends(get_db)):
 def get_purchases(date_start: date | None = Body(None), 
                     date_end: date | None = Body(None), 
                     db: Session = Depends(get_db)):
-
-    #TODO in get_query(date_start and date_end)
-    if date_start and date_end:
-        query = db.query(Purchase.name,  func.sum(Purchase.price).label('total')).filter(Purchase.date>=date_start, Purchase.date<=date_end).group_by(Purchase.name).order_by(sqlalchemy.desc('total'))
-
-    else:
-        query = db.query(Purchase.name,  func.sum(Purchase.price).label('total')).group_by(Purchase.name).order_by(sqlalchemy.desc('total'))
-
-    result = [{'name':item.name, 'total':item.total} for item in query]
+    """Получение списка покупок"""
     
-    return result
+    purchases_list = get_purchases_with_total(db, date_start, date_end)
+    return purchases_list
