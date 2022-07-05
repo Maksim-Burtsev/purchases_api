@@ -15,6 +15,7 @@ from api.services import (
     add_new_purchase,
     remove_purchase,
     get_purchases_with_total,
+    OrderField
 )
 
 
@@ -42,8 +43,9 @@ def delete_purchase(name: str, db: Session = Depends(get_db)):
 def get_purchases(date_start: date | None = Query(None), 
                     date_end: date | None = Query(None),
                     limit: int | None = Query(None, gt=0), 
-                    db: Session = Depends(get_db)):
+                    db: Session = Depends(get_db),
+                    order_field: OrderField | None = Query(None)):
     """Получение списка покупок"""
-    #TODO добавить возможность сортировать
-    purchases_list = get_purchases_with_total(db, date_start, date_end, limit)
+    purchases_list = get_purchases_with_total(
+                                db, date_start, date_end, limit, order_field)
     return purchases_list

@@ -1,5 +1,6 @@
 from datetime import date
 from typing import TypedDict
+from enum import Enum
 
 import sqlalchemy
 from sqlalchemy.orm import Session
@@ -15,6 +16,15 @@ class ItemDict(TypedDict):
     name: str
     total: int
     count: int
+
+
+class OrderField(str, Enum):
+    NAME = 'name'
+    TOTAL = 'total'
+    COUNT = 'count'
+    DESC_NAME = '-name'
+    DESC_TOTAL = '-total'
+    DESC_COUNT = '-count'
 
 
 def get_db():
@@ -53,10 +63,13 @@ def remove_purchase(name: str, db: Session):
 
 
 def get_purchases_with_total(db: Session, date_start: date | None,
-                             date_end: date | None, limit: int | None) -> list[ItemDict]:
+                             date_end: date | None, limit: int | None,
+                             order_field: OrderField | None) -> list[ItemDict]:
     """
     Возвращает список состоящий из имени покупки общей суммы (которая на неё потрачена) и сколько раз она была сделана
     """
+    order = get_order(order_field)
+
     query = db.query(Purchase.name,
                      func.sum(Purchase.price).label('total'),
                      func.count(Purchase.name).label('count'))
@@ -66,8 +79,19 @@ def get_purchases_with_total(db: Session, date_start: date | None,
                              Purchase.date <= date_end)
 
     query = query.group_by(Purchase.name)\
-                 .order_by(sqlalchemy.desc('total'))[:limit]
+                 .order_by(order)[:limit]
 
     result = [ItemDict(name=item.name, total=item.total,
                        count=item.count) for item in query]
     return result
+
+
+def get_order(order_field):
+    """
+    Возвращает asc/desc объект sqlalchemy, который используется для order_by
+    """
+    if order_field:
+        if order_field[0] == '-':
+            return sqlalchemy.desc(order_field[1:])
+        return sqlalchemy.asc(order_field)
+    return sqlalchemy.desc('total')
