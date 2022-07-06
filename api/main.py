@@ -37,6 +37,7 @@ def delete_purchase(name: str, db: Session = Depends(get_db)):
     """Удаление покупки"""
 
     remove_purchase(name.title(), db)
+    #TODO если объекта нет, то 404
     return None
 
 @app.get('/get_purchases', response_model=list[ItemTotalOutput | None])
@@ -49,3 +50,5 @@ def get_purchases(date_start: date | None = Query(None),
     purchases_list = get_purchases_with_total(
                                 db, date_start, date_end, limit, order_field)
     return purchases_list
+
+    #https://stackoverflow.com/questions/55873174/how-do-i-return-an-image-in-fastapi
