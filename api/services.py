@@ -1,6 +1,8 @@
-from datetime import date
+from datetime import date, datetime
 from typing import TypedDict
 from enum import Enum
+
+from fastapi import HTTPException
 
 import sqlalchemy
 from sqlalchemy.orm import Session
@@ -99,3 +101,13 @@ def get_order(order_field):
             return sqlalchemy.desc(order_field[1:])
         return sqlalchemy.asc(order_field)
     return sqlalchemy.desc('total')
+
+
+def validate_items_date(items: list[Item]) -> None:
+    """
+    Проверяет, чтобы дата объекта была меньше либо равна текущей (не была из будущей)
+    """
+    current_date = datetime.now().date()
+    for item in items:
+        if item.date > current_date:
+            raise HTTPException(status_code=400, detail='Date is invalid')
