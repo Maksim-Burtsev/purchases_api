@@ -15,7 +15,7 @@ from api.services import (
     add_new_purchases,
     remove_purchase,
     get_purchases_with_total,
-    validate_date_of_items,
+    validate_items_date,
     OrderField
 )
 
