@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -6,7 +6,8 @@ from pydantic import BaseModel, Field
 class Item(BaseModel):
     name: str
     price: int = Field(..., gt=0)
-    date: date 
+    date: date
+
 
 class ItemTotalOutput(BaseModel):
     name: str

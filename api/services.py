@@ -38,17 +38,21 @@ def get_db():
         db.close()
 
 
-def add_new_purchase(item: Item, db: Session) -> Purchase:
+def add_new_purchases(items: list[Item], db: Session) -> None:
     """
-    Добавляет покупку в базу данных
+    Добавляет покупки в базу данных
     """
-    db_purhase = Purchase(name=item.name.title(),
-                          price=item.price,
-                          date=item.date)
-    db.add(db_purhase)
+    purchases_list = []
+    for item in items:
+        purchases_list.append(
+            Purchase(
+                name=item.name.title(),
+                price=item.price,
+                date=item.date
+            )
+        )
+    db.add_all(purchases_list)
     db.commit()
-    db.refresh(db_purhase)
-    return db_purhase
 
 
 def remove_purchase(name: str, db: Session) -> Purchase:
