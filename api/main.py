@@ -3,7 +3,7 @@ from datetime import date
 
 sys.path.append("..")
 
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -27,7 +27,7 @@ app = FastAPI()
 @app.post('/add_purchase', status_code=201, response_model=Item)
 def add_purchase(item: Item, db: Session = Depends(get_db)):
     """Добавление покупки"""
-    
+    #TODO добавить возможность чтобы можно было добавлять список покупок сразу и чтобы дата не могла быть в будущем
     add_new_purchase(item, db)
     return item
 
@@ -36,8 +36,10 @@ def add_purchase(item: Item, db: Session = Depends(get_db)):
 def delete_purchase(name: str, db: Session = Depends(get_db)):
     """Удаление покупки"""
 
-    remove_purchase(name.title(), db)
-    #TODO если объекта нет, то 404
+    deleted_purhase = remove_purchase(name.title(), db)
+    if not deleted_purhase:
+        raise HTTPException(status_code=404, detail='Item not found')
+        
     return None
 
 @app.get('/get_purchases', response_model=list[ItemTotalOutput | None])

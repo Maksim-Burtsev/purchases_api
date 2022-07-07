@@ -51,15 +51,15 @@ def add_new_purchase(item: Item, db: Session) -> Purchase:
     return db_purhase
 
 
-def remove_purchase(name: str, db: Session):
+def remove_purchase(name: str, db: Session) -> Purchase:
     """
     Удаляет первую покупку с указанным именем из базы данных
     """
     db_purhase = db.query(Purchase).filter(Purchase.name == name).first()
-    print(db_purhase)
     if db_purhase:
         db.delete(db_purhase)
         db.commit()
+    return db_purhase
 
 
 def get_purchases_with_total(db: Session, date_start: date | None,

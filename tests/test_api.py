@@ -22,7 +22,7 @@ def test_get_purchases():
 
     assert response.status_code == 200
     assert response.json() == [{'count': 1, 'name': 'Test', 'total': 100}]
-
+#сделать тесты на фильтры
 
 def test_delete_purchase():
 
