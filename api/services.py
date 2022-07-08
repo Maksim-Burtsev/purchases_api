@@ -80,9 +80,11 @@ def get_purchases_with_total(db: Session, date_start: date | None,
                      func.sum(Purchase.price).label('total'),
                      func.count(Purchase.name).label('count'))
 
-    if date_start and date_end:
-        query = query.filter(Purchase.date >= date_start,
-                             Purchase.date <= date_end)
+    if date_start:
+        query = query.filter(Purchase.date >= date_start)
+
+    if date_end:
+        query = query.filter(Purchase.date <= date_end)
 
     query = query.group_by(Purchase.name)\
                  .order_by(order)[:limit]

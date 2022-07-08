@@ -47,8 +47,8 @@ def delete_purchase(name: str, db: Session = Depends(get_db)):
 def get_purchases(date_start: date | None = Query(None), 
                     date_end: date | None = Query(None),
                     limit: int | None = Query(None, gt=0), 
-                    db: Session = Depends(get_db),
-                    order_field: OrderField | None = Query(None)):
+                    order_field: OrderField | None = Query(None),
+                    db: Session = Depends(get_db)):
     """Получение списка покупок"""
     purchases_list = get_purchases_with_total(
                                 db, date_start, date_end, limit, order_field)
