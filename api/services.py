@@ -44,15 +44,14 @@ def add_new_purchases(items: list[Item], db: Session) -> None:
     """
     Добавляет покупки в базу данных
     """
-    purchases_list = []
-    for item in items:
-        purchases_list.append(
-            Purchase(
-                name=item.name.title(),
-                price=item.price,
-                date=item.date
-            )
+    purchases_list = [
+        Purchase(
+            name=item.name.title(),
+            price=item.price,
+            date=item.date
         )
+        for item in items
+    ]
     db.add_all(purchases_list)
     db.commit()
 
