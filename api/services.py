@@ -8,6 +8,8 @@ import sqlalchemy
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
+import matplotlib.pyplot as plt
+
 from db.models import Purchase
 from db.database import SessionLocal
 
@@ -112,3 +114,18 @@ def validate_items_date(items: list[Item]) -> None:
     for item in items:
         if item.date > current_date:
             raise HTTPException(status_code=400, detail='Date is invalid')
+
+
+def create_pie_chart(db: Session, filename: str) -> None:
+    """
+    Создаёт диаграмму на основе 10 самых частовстречающихся покупок и сохраняет её в /pie_images
+    """
+    query = db.query(Purchase.name, func.count(Purchase.name).label('count'))\
+                    .group_by(Purchase.name)\
+                    .order_by(sqlalchemy.desc('count'))[:10]
+
+    values = [item.count for item in query]
+    labels = [f'{item.name} ({item.count})' for item in query]
+
+    plt.pie(values, labels=labels)
+    plt.savefig(f'pie_images/{filename}.jpeg')

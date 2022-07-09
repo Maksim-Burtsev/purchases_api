@@ -4,6 +4,7 @@ from datetime import date
 sys.path.append("..")
 
 from fastapi import FastAPI, Depends, Query, HTTPException
+from fastapi.responses import FileResponse
 
 from sqlalchemy.orm import Session
 
@@ -16,6 +17,7 @@ from api.services import (
     remove_purchase,
     get_purchases_with_total,
     validate_items_date,
+    create_pie_chart,
     OrderField
 )
 
@@ -54,4 +56,13 @@ def get_purchases(date_start: date | None = Query(None),
                                 db, date_start, date_end, limit, order_field)
     return purchases_list
 
-    #https://stackoverflow.com/questions/55873174/how-do-i-return-an-image-in-fastapi
+@app.get('/get_count_pie', status_code=200)
+def get_count_pie(user_id: int, db: Session = Depends(get_db)):
+    """Возвращает диаграмму на основе 10 самых частовстречающихся покупок"""
+
+    filename = str(user_id)
+    create_pie_chart(db, filename)
+
+    return FileResponse(f'pie_images/{filename}.jpeg')
+
+#TODO autodelete img after response
