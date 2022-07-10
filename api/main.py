@@ -60,7 +60,7 @@ def get_purchases(date_start: date | None = Query(None),
 
 
 @app.get('/get_count_pie', status_code=200)
-def get_count_pie(user_id: int, background_tasks: BackgroundTasks,
+def get_count_pie(background_tasks: BackgroundTasks,
                   db: Session = Depends(get_db)):
     """Возвращает диаграмму на основе 10 самых частовстречающихся покупок"""
 

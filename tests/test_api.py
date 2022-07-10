@@ -101,6 +101,12 @@ def test_delete_purchase():
     assert response.status_code == 200
     assert response.json() == [{'count': 3, 'name': 'Test', 'total': 533}]
 
+def test_get_count_pie():
+    response = client.get('/get_count_pie')
+
+    assert response.status_code == 200
+    assert response.text != ''
+
 def test_tear_down():
     
     session = SessionLocal()

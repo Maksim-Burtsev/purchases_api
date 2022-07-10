@@ -1,3 +1,8 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 from datetime import date, datetime
 from typing import TypedDict
 from enum import Enum
@@ -7,8 +12,6 @@ from fastapi import HTTPException
 import sqlalchemy
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-import matplotlib.pyplot as plt
 
 from db.models import Purchase
 from db.database import SessionLocal
