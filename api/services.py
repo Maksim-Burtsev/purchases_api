@@ -116,7 +116,7 @@ def validate_items_date(items: list[Item]) -> None:
             raise HTTPException(status_code=400, detail='Date is invalid')
 
 
-def create_pie_chart(db: Session, filename: str) -> None:
+def create_pie_chart(db: Session) -> None:
     """
     Создаёт диаграмму на основе 10 самых частовстречающихся покупок и сохраняет её в /pie_images
     """
@@ -128,4 +128,4 @@ def create_pie_chart(db: Session, filename: str) -> None:
     labels = [f'{item.name} ({item.count})' for item in query]
 
     plt.pie(values, labels=labels)
-    plt.savefig(f'pie_images/{filename}.jpeg')
+    plt.savefig('pie.jpeg')
