@@ -13,10 +13,11 @@ import sqlalchemy
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from db.models import Purchase
+from db.models import Purchase, Note
 from db.database import SessionLocal
 
 from shemas.item import Item
+from shemas.notes import NoteSchema
 
 
 class ItemDict(TypedDict):
@@ -132,3 +133,20 @@ def create_pie_chart(db: Session) -> None:
 
     plt.pie(values, labels=labels)
     plt.savefig('pie.jpeg')
+
+def add_new_notes(notes: list[NoteSchema], db: Session):
+    """
+    Добавляет заметки в базу данных
+    """
+
+    notes_list = [
+        Note(
+            title=note.title,
+            tag=note.tag,
+            date=note.date
+        )
+        for note in notes
+    ]
+
+    db.add_all(notes_list)
+    db.commit()
