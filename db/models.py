@@ -13,3 +13,15 @@ class Purchase(Base):
 
     def __repr__(self) -> str:
         return self.name
+
+
+class Note(Base):
+    __tablename__ = 'notes'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(Integer)
+    tag = Column(Integer)
+    date = Column(Date)
+
+    def __repr__(self) -> str:
+        return self.title

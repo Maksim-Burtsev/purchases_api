@@ -1,5 +1,4 @@
 import datetime
-from pydoc import cli
 
 from fastapi.testclient import TestClient
 
