@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 
 from sqlalchemy.orm import Session
 
-from db.models import Base
+from db.models import Base, Note
 from db.database import engine
 from shemas.item import Item, ItemTotalOutput
 from shemas.notes import NoteSchema
@@ -21,6 +21,7 @@ from api.services import (
     create_pie_chart,
     add_new_notes,
     remove_note,
+    get_notes_from_db,
     OrderField,
 )
 from api.tasks import remove_pie_image
@@ -78,17 +79,31 @@ def get_count_pie(background_tasks: BackgroundTasks, db: Session = Depends(get_d
 
 @app.post("/add_notes", status_code=201, response_model=list[NoteSchema])
 def add_note(notes: list[NoteSchema], db: Session = Depends(get_db)):
+    """Добавление заметок"""
 
     add_new_notes(notes, db)
 
     return notes
 
 
-@app.delete('/delete_note', status_code=200)
-def delete_note(tag: str | None = None, title: str | None = None,
-                db: Session = Depends(get_db)):
+@app.delete("/delete_note", status_code=200)
+def delete_note(
+    tag: str | None = None, title: str | None = None, db: Session = Depends(get_db)
+):
+    """Удаление заметок"""
 
     if not tag and not title:
-        raise HTTPException(status_code=400, detail='Title or Tag is required')
+        raise HTTPException(status_code=400, detail="Title or Tag is required")
 
     remove_note(db, title, tag)
+
+
+@app.get("/get_notes", status_code=200, response_model=list[NoteSchema|str])
+def get_notes(
+    tag: str | None = Query(None),
+    title: str | None = Query(None),
+    db: Session = Depends(get_db)
+):
+    query = get_notes_from_db(db, tag, title)
+
+    return query
