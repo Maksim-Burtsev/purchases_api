@@ -141,12 +141,28 @@ def add_new_notes(notes: list[NoteSchema], db: Session):
 
     notes_list = [
         Note(
-            title=note.title,
-            tag=note.tag,
+            title=note.title.title(),
+            tag=note.tag.lower(),
             date=note.date
         )
         for note in notes
     ]
 
     db.add_all(notes_list)
+    db.commit()
+
+
+def remove_note(db: Session, title: str | None = None, tag: str | None = None):
+    """
+    Удаляет все заметки по тегу или заголовку, который содержит title 
+    """
+    if tag: 
+        db.query(Note).filter(Note.tag==tag).delete()
+    elif title:
+        #TODO при переходе на Postgres учесть регистр (дополнительно добавить startwith title.title())
+        query = db.query(Note).filter(Note.title.contains(title)).all()
+        if query:
+            for item in query:
+                db.delete(item)
+
     db.commit()

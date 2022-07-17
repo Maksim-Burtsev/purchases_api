@@ -20,6 +20,7 @@ from api.services import (
     validate_items_date,
     create_pie_chart,
     add_new_notes,
+    remove_note,
     OrderField,
 )
 from api.tasks import remove_pie_image
@@ -81,3 +82,13 @@ def add_note(notes: list[NoteSchema], db: Session = Depends(get_db)):
     add_new_notes(notes, db)
 
     return notes
+
+
+@app.delete('/delete_note', status_code=200)
+def delete_note(tag: str | None = None, title: str | None = None,
+                db: Session = Depends(get_db)):
+
+    if not tag and not title:
+        raise HTTPException(status_code=400, detail='Title or Tag is required')
+
+    remove_note(db, title, tag)
