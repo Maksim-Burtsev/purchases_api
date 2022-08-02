@@ -167,7 +167,6 @@ def remove_note(db: Session, title: str | None = None, tag: str | None = None):
     if tag:
         db.query(Note).filter(Note.tag == tag).delete()
     elif title:
-        # TODO при переходе на Postgres учесть регистр (дополнительно добавить startwith title.title())
         query = db.query(Note).filter(Note.title.contains(title)).all()
         if query:
             for item in query:
