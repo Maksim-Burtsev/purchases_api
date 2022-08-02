@@ -1,8 +1,8 @@
 run:
-	uvicorn main:app --reload
+	cd ./api && uvicorn main:app --reload
 
 req:
 	pip freeze > requirements.txt
 
 test:
-	cd ./api && uvicorn main:app --reload
+	pytest
